@@ -1,134 +1,198 @@
-import { useState,useEffect } from "react"
-import axios from "axios"
-import "../App.css"
+import { useState, useEffect } from "react";
+import axios from "axios";
+import "../App.css";
 
-function Attendance(){
+const Attendance = () => {
 
- const API_EMP="http://localhost:5000/api/employee"
- const API_ATT="http://localhost:5000/api/attendance"
+  const API_EMP = "http://localhost:5000/api/employee";
+  const API_ATT = "http://localhost:5000/api/attendance";
 
- const [employees,setEmployees]=useState([])
- const [records,setRecords]=useState([])
+  const [employees, setEmployees] = useState([]);
+  const [records, setRecords] = useState([]);
 
- const [form,setForm]=useState({
-  employeeId:"",
-  date:"",
-  status:"Present"
- })
+  const [form, setForm] = useState({
+    employee: "",
+    date: "",
+    status: "Present"
+  });
 
- const fetchEmployees=async()=>{
-  const res=await axios.get(API_EMP)
-  setEmployees(res.data)
- }
+  const [loading, setLoading] = useState(false);
 
- const fetchAttendance=async()=>{
-  const res=await axios.get(API_ATT)
-  setRecords(res.data)
- }
+  // Fetch Employees
+  const fetchEmployees = async () => {
+    try {
+      const res = await axios.get(API_EMP);
+      setEmployees(res.data);
+    } catch (error) {
+      console.error("Error loading employees:", error);
+    }
+  };
 
- useEffect(()=>{
-  fetchEmployees()
-  fetchAttendance()
- },[])
+  // Fetch Attendance
+  const fetchAttendance = async () => {
+    try {
+      const res = await axios.get(API_ATT);
+      setRecords(res.data);
+    } catch (error) {
+      console.error("Error loading attendance:", error);
+    }
+  };
 
- const handleChange=(e)=>{
-  setForm({
-   ...form,
-   [e.target.name]:e.target.value
-  })
- }
+  useEffect(() => {
+    fetchEmployees();
+    fetchAttendance();
+  }, []);
 
- const markAttendance=async(e)=>{
-  e.preventDefault()
+  // Handle Form Change
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  };
 
-  if(!form.employeeId || !form.date){
-   alert("Select employee and date")
-   return
-  }
+  // Mark Attendance
+  const markAttendance = async (e) => {
+    e.preventDefault();
 
-  await axios.post(API_ATT,form)
+    if (!form.employee || !form.date) {
+      alert("Please select employee and date");
+      return;
+    }
 
-  fetchAttendance()
+    try {
 
- }
+      setLoading(true);
 
- return(
+      await axios.post(API_ATT, form);
 
-  <div className="container">
+      fetchAttendance();
 
-   <h1 className="title">Attendance</h1>
+      setForm({
+        employee: "",
+        date: "",
+        status: "Present"
+      });
 
-   <div className="card">
+      alert("Attendance marked successfully");
 
-    <form className="form" onSubmit={markAttendance}>
+    } catch (error) {
 
-     <select
-      name="employeeId"
-      onChange={handleChange}
-     >
+      console.error(error);
+      alert(error.response?.data?.message || "Error marking attendance");
 
-      <option value="">Select Employee</option>
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      {employees.map(emp=>(
-       <option key={emp._id} value={emp.employeeId}>
-        {emp.fullName}
-       </option>
-      ))}
+  return (
+    <div className="container">
 
-     </select>
+      <h1 className="title">Attendance</h1>
 
-     <input
-      type="date"
-      name="date"
-      onChange={handleChange}
-     />
+      {/* Attendance Form */}
+      <div className="card">
 
-     <select
-      name="status"
-      onChange={handleChange}
-     >
-      <option>Present</option>
-      <option>Absent</option>
-     </select>
+        <form className="form" onSubmit={markAttendance}>
 
-     <button>Mark Attendance</button>
+          <select
+            name="employee"
+            value={form.employee}
+            onChange={handleChange}
+            required
+          >
 
-    </form>
+            <option value="">Select Employee</option>
 
-   </div>
+            {employees.map(emp => (
+              <option key={emp._id} value={emp._id}>
+                {emp.fullName}
+              </option>
+            ))}
 
-   <div className="card">
+          </select>
 
-    <h2>Attendance Records</h2>
+          <input
+            type="date"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+            required
+          />
 
-    <table>
+          <select
+            name="status"
+            value={form.status}
+            onChange={handleChange}
+          >
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+          </select>
 
-     <thead>
-      <tr>
-       <th>Employee</th>
-       <th>Date</th>
-       <th>Status</th>
-      </tr>
-     </thead>
+          <button type="submit" disabled={loading}>
+            {loading ? "Saving..." : "Mark Attendance"}
+          </button>
 
-     <tbody>
+        </form>
 
-      {records.map(r=>(
-       <tr key={r._id}>
-        <td>{r.employeeId}</td>
-        <td>{new Date(r.date).toLocaleDateString()}</td>
-        <td>{r.status}</td>
-       </tr>
-      ))}
+      </div>
 
-     </tbody>
+      {/* Attendance Records */}
+      <div className="card">
 
-    </table>
+        <h2>Attendance Records</h2>
 
-   </div>
+        <table>
 
-  </div>
- )
-}
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
 
-export default Attendance
+          <tbody>
+
+            {records.length === 0 ? (
+
+              <tr>
+                <td colSpan="3">No attendance records</td>
+              </tr>
+
+            ) : (
+
+              records.map(record => (
+
+                <tr key={record._id}>
+
+                  <td>
+                    {record.employee?.fullName || record.employee}
+                  </td>
+
+                  <td>
+                    {new Date(record.date).toLocaleDateString()}
+                  </td>
+
+                  <td>
+                    {record.status}
+                  </td>
+
+                </tr>
+
+              ))
+
+            )}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+  );
+};
+
+export default Attendance;

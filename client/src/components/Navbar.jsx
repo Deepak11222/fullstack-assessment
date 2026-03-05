@@ -1,28 +1,19 @@
 import { Link } from "react-router-dom";
-import "../App.css";
 
 const Navbar = () => {
 
   return (
-    <div className="navbar">
+    <nav className="navbar">
 
-      <div className="navbar-inner">
+      <h2>HRMS Lite</h2>
 
-        <div className="logo">
-          HRMS Lite
-        </div>
-
-        <div className="nav-links">
-
-          <Link to="/">Employees</Link>
-
-          <Link to="/attendance">Attendance</Link>
-
-        </div>
-
+      <div className="nav-links">
+        <Link to="/">Dashboard</Link>
+        <Link to="/employees">Employees</Link>
+        <Link to="/attendance">Attendance</Link>
       </div>
 
-    </div>
+    </nav>
   );
 
 };

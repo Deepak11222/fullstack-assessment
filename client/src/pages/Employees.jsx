@@ -90,7 +90,7 @@ function Employees(){
 
  return(
 
-  <div className="page-container">
+  <div>
 
    <h1 className="title">Employees</h1>
 
