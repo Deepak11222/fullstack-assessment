@@ -14,7 +14,12 @@ connectedDB()
 
 
 app.use(cors({
-  origin: "*"
+  origin: [
+    "http://localhost:5173",
+    "https://fullstack-assessment-rose.vercel.app"
+  ],
+  methods: ["GET","POST","DELETE","PUT"],
+  credentials: true
 }));
 app.use(express.json());
 
