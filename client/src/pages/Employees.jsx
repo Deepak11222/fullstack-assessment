@@ -4,7 +4,7 @@ import "../App.css"
 
 function Employees(){
 
- const API = `${import.meta.env.VITE_API_BASE_URL}/employee`
+ const API = "https://fullstack-assessment-agg9.onrender.com/api/employee"
 
  const [employees,setEmployees]=useState([])
 

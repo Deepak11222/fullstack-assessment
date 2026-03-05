@@ -7,8 +7,8 @@ const Dashboard = () => {
   const [employees, setEmployees] = useState([]);
   const [attendance, setAttendance] = useState([]);
 
-  const API_EMP = "http://localhost:5000/api/employee";
-  const API_ATT = "http://localhost:5000/api/attendance";
+  const API_EMP = "https://fullstack-assessment-agg9.onrender.com/api/employee";
+  const API_ATT = "https://fullstack-assessment-agg9.onrender.com/api/attendance";
 
   useEffect(() => {
 
