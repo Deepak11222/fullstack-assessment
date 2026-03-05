@@ -4,8 +4,8 @@ import "../App.css";
 
 const Attendance = () => {
 
-  const API_EMP = "http://localhost:5000/api/employee";
-  const API_ATT = "http://localhost:5000/api/attendance";
+  const API_EMP = `${import.meta.env.VITE_API_BASE_URL}/employee`;
+  const API_ATT = `${import.meta.env.VITE_API_BASE_URL}/attendance`;
 
   const [employees, setEmployees] = useState([]);
   const [records, setRecords] = useState([]);

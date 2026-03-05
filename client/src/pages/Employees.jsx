@@ -4,7 +4,7 @@ import "../App.css"
 
 function Employees(){
 
- const API="http://localhost:5000/api/employee"
+ const API = `${import.meta.env.VITE_API_BASE_URL}/employee`
 
  const [employees,setEmployees]=useState([])
 
